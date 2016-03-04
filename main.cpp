@@ -8,6 +8,7 @@
 #else
     #include <dlfcn.h>
     #include <dirent.h>         // {open,read}dir
+    #include <string.h>         // strlen()
 #endif
 
 #include "api.h"
@@ -129,7 +130,12 @@ void describeProcessingFunction(void)
 {
 	for (auto thing :  availableMethods)
 	{
-		printf("%s : %s\n", thing.name, thing.description);
+		printf("%s : %s", thing.name, thing.description);
+        if (thing.options)
+        {
+            printf(" (%s)", thing.options);
+        }
+        printf("\n");
 	}
 }
 

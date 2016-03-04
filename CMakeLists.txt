@@ -3,7 +3,7 @@ project (Pipeline)
 
 IF(WIN32)
 
-add_definitions("-DLIBRARY_EXTENSION=.dll")
+add_definitions("-DLIBRARY_EXTENSION=\".dll\"")
 add_definitions("-DLIB_EXPORT=__declspec(dllexport)")
 
 ELSEIF (APPLE)
@@ -12,7 +12,8 @@ add_definitions("-DLIBRARY_EXTENSION=\".dylib\"")
 
 ELSE()
 
-add_definitions("-DLIBRARY_EXTENSION=.so")
+add_definitions("-DLIBRARY_EXTENSION=\".so\"")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ldl")
 
 ENDIF()
 

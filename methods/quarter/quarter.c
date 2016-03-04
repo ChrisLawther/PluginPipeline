@@ -10,7 +10,8 @@ LIB_EXPORT processingMethod pipeline_init(void)
 	static processingMethod spec = {
 		.name = "Quarter",
 		.description = "I divide my input by four",
-		.function = process
+		.function = process,
+        .options = "{factor: integer, range: {from: 1, to: 10}}"
 	};
 
 	return spec;
