@@ -24,7 +24,13 @@ add_definitions("-DLIB_EXPORT=")
 
 ENDIF()
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/..)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/..)
+
 add_executable(Pipeline main.cpp )
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/../libs)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/../libs)
 
 add_subdirectory(methods/double)
 add_subdirectory(methods/quarter)
