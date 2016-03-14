@@ -13,7 +13,7 @@
 
 #include "api.h"
 
-std::vector<processingMethod> availableMethods;
+std::vector<Plugin *> availableMethods;
 
 int loadLibrary(const char * const libraryName)
 {
@@ -130,34 +130,46 @@ void describeProcessingFunction(void)
 {
 	for (auto thing :  availableMethods)
 	{
-		printf("%s : %s", thing.name, thing.description);
-        if (thing.options)
+		printf("%s : %s", thing->name(), thing->description());
+/*        if (thing.options)
         {
             printf(" (%s)", thing.options);
-        }
+        }*/
         printf("\n");
 	}
 }
 
 int main(int argc, char *argv[])
 {
-	std::vector<processingFunc> pipeline;
+	std::vector<Plugin *> pipeline;
 
 	loadProcessingFunctions();
 
 	describeProcessingFunction();
 
+    DataTypes dataType = UNSIGNED_PRIMITIVE;
+    
+    // Are the in/out types valid for the whole pipeline, whatever that turns out to be
 	if (argc == 2)
 	{
 		char *ch = argv[1];
 
 		while (*ch)
 		{
-			for (auto thing :  availableMethods)
+			for (auto thing : availableMethods)
 			{
-				if (*ch == thing.name[0])
+				if (*ch == thing->name()[0])
 				{
-					pipeline.push_back(thing.function);
+                    if (thing->accepts() == dataType)
+                    {
+                        pipeline.push_back(thing);
+                        dataType = thing->returns();
+                    } else {
+                        fprintf(stderr, "'%s' expects %s, we have %s\n",
+                                thing->name(), enumAsText(thing->accepts()), enumAsText(dataType)
+                        );
+                        exit(-1);
+                    }
 				}
 			}
 
@@ -169,19 +181,24 @@ int main(int argc, char *argv[])
 		// Just do everything in the order we discovered it
 		for (auto thing :  availableMethods)
 		{
-			pipeline.push_back(thing.function);
+			pipeline.push_back(thing);
 		}
 	}
-
-	double value = 100;
+    
+    void *value = new unsigned(100);
+    double *result;
 	for (auto thing : pipeline)
 	{
-		printf("%lf", value);
-		value = thing(value);
-		printf("-> %lf\n", value);
+		printf("%lf", *(double*)value);
+		result = (double*)thing->method(value);
+        delete value;
+		printf("-> %lf\n", *result);
+        value = result;
 	}
 
-	printf("Pipeline flushed, result : %lf\n", value);
+	printf("Pipeline flushed, result : %lf\n", *result);
+    
+    delete result;
 
 	return 0;
 }
